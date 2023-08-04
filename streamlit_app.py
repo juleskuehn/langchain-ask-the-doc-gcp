@@ -1,11 +1,12 @@
 import tempfile
+
 import streamlit as st
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import Chroma
 
-from vertex_ai.vertex_ai import gcp_embeddings, gcp_llm, gcp_chat
+from vertex_ai.vertex_ai import gcp_chat, gcp_embeddings, gcp_llm
 
 
 def generate_response(uploaded_file, query_text):
@@ -13,19 +14,18 @@ def generate_response(uploaded_file, query_text):
     if uploaded_file is not None:
         # Check if document is PDF
         if uploaded_file.type == "application/pdf":
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp.write(uploaded_file.getvalue())
                 tmp_location = tmp.name
-            
+
             loader = PyPDFLoader(tmp_location)
-            pages = loader.load_and_split()
-            documents = [page.text for page in pages]
+            texts = loader.load_and_split()
         # Otherwise, read as text
         else:
             documents = [uploaded_file.read().decode()]
-        # Split documents into chunks
-        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        texts = text_splitter.create_documents(documents)
+            # Split documents into chunks
+            text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+            texts = text_splitter.create_documents(documents)
         # Select embeddings
         embeddings = gcp_embeddings
         # Create a vectorstore from documents

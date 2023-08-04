@@ -6,6 +6,15 @@ Modified to use Google Cloud Platform Vertex AI LLMs and embeddings.
 
 ## Setup
 
+Requires Python 3.10+ and the Google Cloud CLI ([follow the instructions here](https://cloud.google.com/sdk/docs/install)).
+
+Recommended to create an activate a venv for the project, i.e.
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Install the requirements and authorize to GCP.
 ```bash
 pip install -r requirements.txt
 gcloud auth application-default login
